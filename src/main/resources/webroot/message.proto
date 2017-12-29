@@ -1,0 +1,27 @@
+message Data {
+
+ required int32 cmd = 1;
+  required string id = 2;
+  optional int64 create_time = 3;
+  optional string clientId = 4;
+  optional string content = 5;
+  optional string senderId = 6;
+  optional string receiverId = 7;
+  optional string clientName = 8;
+  optional string clientVersion = 9;
+  optional int32 decodeType = 10;
+   enum Cmd {
+
+ 	LOGIN=0;
+ 	LOGIN_ECHO=1;
+ 	LOGOUT=2;
+ 	LOGOUT_ECHO=3;
+ 	OTHER_LOGGIN=4;
+     	HEARTBEAT=5;
+     	CHAT_TXT=6;
+ 	CHAT_TXT_ECHO=7;
+ 	CHAT_OFFLINE_MSGS=8;
+ 	MINE_FRIENDS=9;
+ 	BIND_CLIENT=10;
+ 	}
+ }
