@@ -4,6 +4,8 @@ package com.xie.im.protocol.handler;
 import com.xie.im.protocol.Message;
 import com.xie.im.server.IMSession;
 import io.netty.channel.ChannelHandlerContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
@@ -11,7 +13,7 @@ import static com.xie.im.server.SessionManager.*;
 
 
 public class LoginHandler extends ProtocolHandler {
-
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public int getCmd() {
@@ -20,12 +22,12 @@ public class LoginHandler extends ProtocolHandler {
 
     @Override
     public void handleRequest(ChannelHandlerContext ctx, Message.Data data) {
-        System.out.println("登录消息");
+        logger.debug("登录消息");
         String clientId = data.getClientId();
         IMSession oldSession = getSessionByUid(data.getSenderId());
         if (oldSession != null) {
             if (clientId.equals(oldSession.getClientId())) {
-                System.out.println("已经登录过,同一台机器:{}"+data.getClientId());
+                logger.debug("已经登录过,同一台机器:{}"+data.getClientId());
                 Message.Data.Builder reply = Message.Data.newBuilder();
                 reply.setId(UUID.randomUUID().toString());
                 reply.setCmd(Message.Data.Cmd.LOGIN_ECHO_VALUE);
@@ -34,7 +36,7 @@ public class LoginHandler extends ProtocolHandler {
                 oldSession.write(reply.build());
                 return;
             } else {
-                System.out.println("另一台机器登录:{}"+data.getClientId());
+                logger.debug("另一台机器登录:{}"+data.getClientId());
                 Message.Data.Builder offLineReply = Message.Data.newBuilder();
                 offLineReply.setId(UUID.randomUUID().toString());
                 offLineReply.setCmd(Message.Data.Cmd.OTHER_LOGGIN_VALUE);
@@ -54,7 +56,7 @@ public class LoginHandler extends ProtocolHandler {
         newSession.setUid(data.getSenderId());
         newSession.setLoginTime(System.currentTimeMillis());
         onLogin(newSession);
-        System.out.println("登录成功,回应客户端:{}"+data.getClientId());
+        logger.debug("登录成功,回应客户端:{}"+data.getClientId());
         Message.Data.Builder reply = Message.Data.newBuilder();
         reply.setId(UUID.randomUUID().toString());
         reply.setCmd(Message.Data.Cmd.LOGIN_ECHO_VALUE);
